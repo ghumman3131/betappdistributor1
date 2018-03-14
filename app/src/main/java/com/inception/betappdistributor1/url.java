@@ -6,4 +6,5 @@ package com.inception.betappdistributor1;
 
 public class url {
    public static String ip="http://edvt.in/betting_app_api/webapi2.php";
+   public static String ipm="http://edvt.in/betting_app_api/messageapi.php";
 }
