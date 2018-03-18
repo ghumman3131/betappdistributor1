@@ -13,18 +13,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.inception.betappdistributor1.fragments.AllUsers;
 import com.inception.betappdistributor1.fragments.ShowFragments;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HomeActivity extends AppCompatActivity {
 
 
 
     private ActionBarDrawerToggle toggle;
-
+String savedid;
     DrawerLayout drawerLayout;
-
+TextView message;
     FragmentManager fm ;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -56,11 +65,12 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Distributor 1");
 
         fm = getSupportFragmentManager();
-
+        SharedPreferences sp = getSharedPreferences("user_info" , MODE_PRIVATE);
+        savedid = sp.getString("distributor_id","");
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-
+message=findViewById(R.id.message_txt);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -69,14 +79,52 @@ public class HomeActivity extends AppCompatActivity {
         drawerLayout.setDrawerListener(toggle);
 
         open_home();
+        get_message();
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         toggle.syncState();
-    }
 
+    }
+    private void get_message() {
+        final JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("module", "main_message");
+            jsonObject.put("id", savedid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        System.out.println(jsonObject);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url.ip, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                System.out.println(response);
+
+                try {
+                    JSONObject ob =response.getJSONObject("result");
+                    message.setText(ob.getString("message"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 2, 2));
+
+        Volley.newRequestQueue(HomeActivity.this).add(jsonObjectRequest);
+
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -158,5 +206,16 @@ public class HomeActivity extends AppCompatActivity {
         startActivity(new Intent(HomeActivity.this , Markets.class));
 
 
+    }
+
+    public void messages(View view) {
+        drawerLayout.closeDrawer(Gravity.START);
+
+        startActivity(new Intent(HomeActivity.this , messages.class));
+    }
+    public void onResume() {
+        super.onResume();
+
+        get_message();
     }
 }
