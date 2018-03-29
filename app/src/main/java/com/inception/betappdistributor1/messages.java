@@ -34,9 +34,10 @@ public class messages extends AppCompatActivity {
     JSONArray jsonArray;
     ProgressDialog progress;
     RecyclerView recyclerView;
-    String savedname,savedid;
+    String savedname, savedid;
     TextView add_message;
-EditText message_et;
+    EditText message_et;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
@@ -44,7 +45,7 @@ EditText message_et;
         getSupportActionBar().setTitle("Messages");
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        message_et=findViewById(R.id.msg_et);
+        message_et = findViewById(R.id.msg_et);
         SharedPreferences sp = getSharedPreferences("user_info", MODE_PRIVATE);
         savedname = sp.getString("username", "");
         savedid = sp.getString("id", "");
@@ -56,9 +57,9 @@ EditText message_et;
 
                 try {
                     jsonObject.put("module", "add_message");
-                    jsonObject.put("name" , savedname);
-                    jsonObject.put("message" , message_et.getText().toString());
-                    jsonObject.put("id" , savedid);
+                    jsonObject.put("name", savedname);
+                    jsonObject.put("message", message_et.getText().toString());
+                    jsonObject.put("id", savedid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -77,12 +78,13 @@ EditText message_et;
                                 message_et.setText("");
 
 
-                                Toast.makeText(messages.this , "message added successfully" , Toast.LENGTH_SHORT).show();
+                                Toast.makeText(messages.this, "message added successfully", Toast.LENGTH_SHORT).show();
 
+                                get_messages();
 
                             } else {
 
-                                Toast.makeText(messages.this , "error try again" , Toast.LENGTH_SHORT).show();
+                                Toast.makeText(messages.this, "error try again", Toast.LENGTH_SHORT).show();
                             }
 
                         } catch (JSONException e) {
@@ -101,7 +103,7 @@ EditText message_et;
                     }
                 });
 
-                jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20000 ,2 ,2 ));
+                jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(20000, 2, 2));
 
                 Volley.newRequestQueue(messages.this).add(jsonObjectRequest);
 
@@ -159,6 +161,7 @@ EditText message_et;
 
         Volley.newRequestQueue(messages.this).add(jsonObjectRequest);
     }
+
     private class Adapter extends RecyclerView.Adapter<view_holder> {
 
 

@@ -192,6 +192,7 @@ public class ShowFragments extends Fragment {
                             try {
                                 Intent i = new Intent(getContext(), MatchOddDetails.class);
                                 i.putExtra("event_id", jsonObject.getString("id"));
+                                i.putExtra("open_date", jsonObject.getString("openDate"));
                                 startActivity(i);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -211,6 +212,7 @@ public class ShowFragments extends Fragment {
                                         try {
                                             Intent i = new Intent(getContext(), MatchOddDetails.class);
                                             i.putExtra("event_id", jsonObject.getString("id"));
+                                            i.putExtra("open_date", jsonObject.getString("openDate"));
                                             startActivity(i);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
